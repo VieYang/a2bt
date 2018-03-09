@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Ethereum Account Explorer built on INFURA</title>
+	<script src="web3.min.js"></script>
+
+  </head>
+
+  <body>
+  	<h2>Ethereum Account Explorer built on INFURA</h2>
+
+    <textarea rows="20" cols="66" id="myTextarea" name="myTextarea"></textarea><br>
+    <input type='text' size="66" id='key' name='key' value='MEDIUMTUTORIAL' /><br>
+    <button type="submit" onclick="printAllBalance()"> submit </button>
+		<br>
+    <div id="show"></dev>
+      <script>
+        key = document.getElementById("key").value;
+        web = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + key));
+
+        function printAllBalance() {
+          key = document.getElementById("key").value;
+          web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + key));
+
+          divshow = document.getElementById("show");
+
+          myText = document.getElementById("myTextarea").value;
+          if (myText == "") return;
+
+          arrayOfLines = myText.split("\n");
+          len = arrayOfLines.length;
+          var batch = web3.createBatch();
+          for (i = 0; i < len; i ++) {
+            var account = arrayOfLines[i];
+            var number = web3.eth.getTransactionCount(account);
+            console.log('[' + i +'][' + number + '][' + account + ']');
+            divshow.innerHTML += '[' + number + '][' + account + ']<br>';
+
+            var balanceWei = web3.eth.getBalance(account).toNumber();
+            var balance = web3.fromWei(balanceWei, 'ether');
+            console.log('[' + i +'][' + balance + '][' + account + ']');
+            divshow.innerHTML += ('[' + balance + '][' + account + ']<br><br>');
+          }
+        }
+      </script>
+
+		<p>Latest Block:
+		<script>
+			document.write(web.eth.blockNumber + "<br><br>");
+		</script>
+		</p>
+
+		<p>Account Balance:<br></p>
+      <script>
+  			printAllBalance();
+  		</script>
+  </body>
+</html>
