@@ -16,7 +16,23 @@
 		<br>
     <div id="show"></dev>
       <script>
-        key = document.getElementById("key").value;
+        var GET = {};
+				var query = window.location.search.substring(1).split("&");
+				for (var i = 0, max = query.length; i < max; i++)
+				{
+					if (query[i] === "") // check for trailing & with no param
+						continue;
+					var param = query[i].split("=");
+					GET[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+				}
+				var key = GET.key;
+        if (key) {
+          document.getElementById("key").value = key;
+          console.log(key);
+          console.log("key");
+        } else {
+          key = document.getElementById("key").value;
+        }
         web = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + key));
 
         function printAllBalance() {
