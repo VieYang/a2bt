@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Ethereum Account Explorer built on INFURA</title>
+	<script src="web3.min.js"></script>
+  <script src="mycrypto-master.js"></script>
+
+  </head>
+
+  <body>
+  	<h2>Ethereum Account Explorer built on INFURA</h2>
+
+    <textarea rows="20" cols="66" id="myTextarea" name="myTextarea"></textarea><br>
+    <input type='text' size="66" id='key' name='key' value='MEDIUMTUTORIAL' /><br>
+    <button type="submit" onclick="printAllBalance()"> submit </button>
+		<br>
+    <div id="show"></dev>
+      <script>
+        hexStr = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        hexArr = hexStr.split(',');
+
+        var GET = {};
+				var query = window.location.search.substring(1).split("&");
+				for (var i = 0, max = query.length; i < max; i++)
+				{
+					if (query[i] === "") // check for trailing & with no param
+						continue;
+					var param = query[i].split("=");
+					GET[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+				}
+				var key = GET.key;
+        if (key) {
+          document.getElementById("key").value = key;
+          console.log(key);
+          console.log("key");
+        } else {
+          key = document.getElementById("key").value;
+        }
+        web = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + key));
+
+        function makeid() {
+            var text = "";
+            var possible = "abcdef0123456789";
+
+            for (var i = 0; i < 64; i++)
+              text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+          }
+
+          function privateKeyToAccount(pkey) {
+           return new Wallet(pkey).getAddressString();
+          }
+
+
+          function get20Address(m) {
+            for (var i = 0; i < 20; i++) {
+              var pkey = makeid();
+              var wallet = new Wallet(pkey);
+              var address = wallet.getAddressString();
+              document.getElementById("myTextarea").value += address + "\n";
+              m.set(pkey, address);
+            }
+          }
+
+
+
+
+        function printAllBalance() {
+          key = document.getElementById("key").value;
+          web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + key));
+
+          divshow = document.getElementById("show");
+
+          var n = GET.n;
+
+          var m = new Map();
+
+          if (n) {
+            for (var i = 0; i < n; i++) {
+                var pkey = makeid();
+                var wallet = new Wallet(pkey);
+                var address = wallet.getAddressString();
+                document.getElementById("myTextarea").value += address + "\n";
+                m.set(pkey, address);
+            }
+          } else get20Address(m);
+        console.log(m.size);
+        for ( var [key, value] of m ) {
+          console.log(key + ' ' + value);
+        }
+
+
+          myText = document.getElementById("myTextarea").value;
+          if (myText == "") return;
+
+          arrayOfLines = myText.split("\n");
+          len = arrayOfLines.length;
+          var batch = web3.createBatch();
+          for (i = 0; i < len; i ++) {
+            var account = arrayOfLines[i];
+            if (account.length <=0)  continue;
+            var number = web3.eth.getTransactionCount(account);
+            console.log('[' + i +'][' + number + '][' + account + ']');
+            divshow.innerHTML += '[' + number + '][' + account + ']<br>';
+
+            var balanceWei = web3.eth.getBalance(account).toNumber();
+            var balance = web3.fromWei(balanceWei, 'ether');
+            console.log('[' + i +'][' + balance + '][' + account + ']');
+            divshow.innerHTML += ('[' + balance + '][' + account + ']<br><br>');
+          }
+        }
+
+
+
+      </script>
+
+		<p>Latest Block:
+		<script>
+			document.write(web.eth.blockNumber + "<br><br>");
+		</script>
+		</p>
+
+		<p>Account Balance:<br></p>
+      <script>
+  			printAllBalance();
+  		</script>
+  </body>
+</html>
