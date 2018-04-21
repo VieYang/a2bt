@@ -60,7 +60,7 @@
               var wallet = new Wallet(pkey);
               var address = wallet.getAddressString();
               document.getElementById("myTextarea").value += address + "\n";
-              m.set(pkey, address);
+              m.set(address, pkey);
             }
           }
 
@@ -75,7 +75,7 @@
 
           var n = GET.n;
 
-          var m = new Map();
+          m = new Map();
 
           if (n) {
             for (var i = 0; i < n; i++) {
@@ -83,7 +83,7 @@
                 var wallet = new Wallet(pkey);
                 var address = wallet.getAddressString();
                 document.getElementById("myTextarea").value += address + "\n";
-                m.set(pkey, address);
+                m.set(address, pkey);
             }
           } else get20Address(m);
         console.log(m.size);
@@ -102,13 +102,13 @@
             var account = arrayOfLines[i];
             if (account.length <=0)  continue;
             var number = web3.eth.getTransactionCount(account);
-            console.log('[' + i +'][' + number + '][' + account + ']');
-            divshow.innerHTML += '[' + number + '][' + account + ']<br>';
+            console.log('[' + i +'][' + number + '][' + account + '][' + m.get(account) +']');
+            divshow.innerHTML += '[' + number + '][' + account + ']<br>[' + m.get(account) + ']<br>';
 
             var balanceWei = web3.eth.getBalance(account).toNumber();
             var balance = web3.fromWei(balanceWei, 'ether');
-            console.log('[' + i +'][' + balance + '][' + account + ']');
-            divshow.innerHTML += ('[' + balance + '][' + account + ']<br><br>');
+            console.log('[' + i +'][' + balance + '][' + account + '][' + m.get(account) +']');
+            divshow.innerHTML += ('[' + balance + '][' + account + ']<br>[' + m.get(account) + ']<br><br>');
           }
         }
 
